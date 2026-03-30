@@ -42,12 +42,28 @@ const PlayIcon = () => {
 
 // end Icons
 
-function Row( { title, fetchUrl, contentType, isLarge } ) {
+function Row( { title, fetchUrl, isLarge } ) {
     const [ movies, setMovies ] = useState([]);
     const [ selectedMovie, setSelectedMovie ] = useState([]);
     const [ movieVideos, setMovieVideos ] = useState([]);
     const [ videosExpanded, setVideosExpanded ] = useState(false);
     const [ modalOpen, setModalOpen ] = useState(false);
+    const [ trailerAvailable, setTrailerAvailable ] = useState(false);
+    const navigate = useNavigate(); 
+
+    const initPlayer = () => {
+        const trailerVideos = movieVideos.filter(function(video) {
+            return video.type === "Trailer";
+        })
+        
+        // if there are no available trailers
+        if (trailerVideos.length < 1) {
+            return;
+        }
+
+        const video_id = trailerVideos[trailerVideos.length - 1].key;
+        navigate(`/player?video_id=${video_id}`);
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -57,13 +73,40 @@ function Row( { title, fetchUrl, contentType, isLarge } ) {
         }
         fetchData();
     }, [fetchUrl])
+
+    useEffect(() => {
+        if (Array.isArray(selectedMovie)) {
+            return;
+        }
+        async function fetchVideos() {
+            console.log(selectedMovie)
+            // movie-tv check
+            // this looks a little cursed, but if it works it works am I right  
+            const getMovie = await axios.get(requests.fetchVideos("movie", selectedMovie.id), {validateStatus:false})
+            if (getMovie.status > 400) {
+                const getTv = await axios.get(requests.fetchVideos("tv", selectedMovie.id), {validateStatus:false})
+                if (getTv.status > 400) {
+                    setTrailerAvailable(false);
+                    return;
+                }
+
+                setTrailerAvailable(true)
+                setMovieVideos(getTv.data.results);
+                return;
+            }
+            setTrailerAvailable(true)
+            setMovieVideos(getMovie.data.results);
+            return;
+        }
+        fetchVideos();  
+    }, [selectedMovie])
     
     return (
         <div className="row">
             <h2>{title}</h2>
             <div className="row_posters">
-                {movies.map((movie) => (
-                    <img
+                {
+                movies.map((movie) => (<img
                         key={movie.id}
                         className={`row_poster ${isLarge && "row_posterLarge"}` }
                         src={ `${BASE_IMG_URL}${isLarge ? movie.poster_path : movie.backdrop_path }` }
@@ -72,23 +115,24 @@ function Row( { title, fetchUrl, contentType, isLarge } ) {
                             setSelectedMovie(movie);
                             setModalOpen(true);
                         }}
-                    />
-                ))}
+                    />)
+                )
+                }
             </div>
-                <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+                <Modal open={modalOpen}
+                
+                onClose={() => {
+                    setModalOpen(false)
+                    setVideosExpanded(false)
+                    setMovieVideos([])
+                    }}>
                     <div className="button_tabs">
-                        <button className="content_button"><PlayIcon />Play Trailer</button>
-                        <button className="content_button" 
+                        <button className={`content_button ${trailerAvailable? "" : "disabled"}`} style={{marginTop:"5px"}} disabled={trailerAvailable} onClick={() => initPlayer()}><PlayIcon />Play Trailer</button>
+                        <button className="content_button" style={{borderBottomLeftRadius:"0", borderBottomRightRadius:"0"}} 
                         onClick={() => {
-                            async function fetchVideos() {
-                                const req = await axios.get(requests.fetchVideos(contentType, selectedMovie.id));
-                                setMovieVideos(req.data.results);
-                                return req;
-                            }
-                            fetchVideos();
                             setVideosExpanded(!videosExpanded);
                         }}><ListIcon />Video List</button>
-                        <div className={`video_list ${videosExpanded? "expanded" : ''}`}>
+                        <div className={`video_list ${videosExpanded? "expanded" : ""}`}>
                             <ul>
                                 {movieVideos.map((video) => (
                                     <li>
