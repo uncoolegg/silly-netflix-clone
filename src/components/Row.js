@@ -58,10 +58,11 @@ function Row( { title, fetchUrl, isLarge } ) {
         
         // if there are no available trailers
         if (trailerVideos.length < 1) {
+            console.warn('trailerVideos is empty')
             return;
         }
 
-        const video_id = trailerVideos[trailerVideos.length - 1].key;
+        const video_id = movieVideos[ movieVideos.length - 1 ].key
         navigate(`/player?video_id=${video_id}`);
     }
 
@@ -73,33 +74,6 @@ function Row( { title, fetchUrl, isLarge } ) {
         }
         fetchData();
     }, [fetchUrl])
-
-    useEffect(() => {
-        if (Array.isArray(selectedMovie)) {
-            return;
-        }
-        async function fetchVideos() {
-            console.log(selectedMovie)
-            // movie-tv check
-            // this looks a little cursed, but if it works it works am I right  
-            const getMovie = await axios.get(requests.fetchVideos("movie", selectedMovie.id), {validateStatus:false})
-            if (getMovie.status > 400) {
-                const getTv = await axios.get(requests.fetchVideos("tv", selectedMovie.id), {validateStatus:false})
-                if (getTv.status > 400) {
-                    setTrailerAvailable(false);
-                    return;
-                }
-
-                setTrailerAvailable(true)
-                setMovieVideos(getTv.data.results);
-                return;
-            }
-            setTrailerAvailable(true)
-            setMovieVideos(getMovie.data.results);
-            return;
-        }
-        fetchVideos();  
-    }, [selectedMovie])
     
     return (
         <div className="row">
@@ -112,7 +86,38 @@ function Row( { title, fetchUrl, isLarge } ) {
                         src={ `${BASE_IMG_URL}${isLarge ? movie.poster_path : movie.backdrop_path }` }
                         alt={movie.name}
                         onClick={() => {
+                            function checkForTrailers(videos) {
+                                const trailerVideos = videos.filter(function(video) {
+                                    return video.type === "Trailer";
+                                })
+
+                                if (trailerVideos.length < 1) {
+                                    setTrailerAvailable(false)
+                                    return;
+                                }
+                                setTrailerAvailable(true)
+                            }
+
+                            async function fetchVideos(movie) {
+                                // movie-tv check
+                                // this looks a little cursed, but if it works it works am I right  
+                                const getMovie = await axios.get(requests.fetchVideos("movie", movie.id), {validateStatus:false})
+                                if (getMovie.status > 400) {
+                                    const getTv = await axios.get(requests.fetchVideos("tv", movie.id), {validateStatus:false})
+                                    if (getTv.status > 400) {
+                                        setTrailerAvailable(false);
+                                        return;
+                                    }
+                                    setMovieVideos(getTv.data.results);
+                                    checkForTrailers(getTv.data.results);
+                                    return;
+                                }
+                                setMovieVideos(getMovie.data.results);
+                                checkForTrailers(getMovie.data.results);
+                                return;
+                            }
                             setSelectedMovie(movie);
+                            fetchVideos(movie);  
                             setModalOpen(true);
                         }}
                     />)
@@ -124,10 +129,11 @@ function Row( { title, fetchUrl, isLarge } ) {
                 onClose={() => {
                     setModalOpen(false)
                     setVideosExpanded(false)
+                    setTrailerAvailable(false)
                     setMovieVideos([])
                     }}>
                     <div className="button_tabs">
-                        <button className={`content_button ${trailerAvailable? "" : "disabled"}`} style={{marginTop:"5px"}} disabled={trailerAvailable} onClick={() => initPlayer()}><PlayIcon />Play Trailer</button>
+                        <button className={`content_button ${trailerAvailable? "" : "disabled"}`} style={{marginTop:"5px"}} onClick={() => initPlayer()}><PlayIcon />Play Trailer</button>
                         <button className="content_button" style={{borderBottomLeftRadius:"0", borderBottomRightRadius:"0"}} 
                         onClick={() => {
                             setVideosExpanded(!videosExpanded);

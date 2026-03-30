@@ -63,6 +63,7 @@
 .content_button.disabled {
     color:gray;
     cursor:not-allowed;
+    pointer-events: none;
 }
 
 .content_button:hover {
@@ -96,10 +97,11 @@
 }
 
 .video_list {
-    display: none;
+    display:none;
 }
 
 .video_list.expanded {
+    display:block;
     max-height: 250px;
     overflow-y: scroll;
     scrollbar-width: 2px;
