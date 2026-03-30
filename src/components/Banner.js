@@ -9,7 +9,7 @@ function Banner() {
     const navigate = useNavigate();
 
     const playMovie = (movie_id) => {
-        navigate(`/player?movie_id=${movie_id}`);
+        navigate(`/player?video_id=dQw4w9WgXcQ`);
     }
 
     useEffect(() => {

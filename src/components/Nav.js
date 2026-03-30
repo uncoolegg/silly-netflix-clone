@@ -26,7 +26,7 @@ function Nav() {
         <img
         className="nav_logo"
         alt="site logo"
-        src="https://upload.wikimedia.org/wikipedia/commons/c/cc/OnlyFans_logo.svg"
+        src="/eggflix_logo.svg"
         onClick={goHome}
         />
     </div>

@@ -2,6 +2,7 @@ import './App.css';
 import Row from './components/Row';
 import Banner from './components/Banner';
 import Nav from './components/Nav';
+import VideoPlayer from './components/VideoPlayer';
 import requests from './requests';
 import {
   BrowserRouter,
@@ -26,7 +27,7 @@ const MainPage = () => (
 const PlayerPage = () => (
   <div className="App">
     <Nav />
-    <h1>Test</h1>
+    <VideoPlayer />
   </div>
 );
 
