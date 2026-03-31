@@ -6,6 +6,7 @@ import './Banner.css';
 
 function Banner() {
     const [movie, setMovie] = useState([]);
+    const [eggActivated, setEggActivated] = useState(false);
     const navigate = useNavigate();
 
     const playMovie = (movie_id) => {
@@ -45,7 +46,7 @@ function Banner() {
 
             <div className="banner_buttons">
                 <button className="banner_button" onClick={() => playMovie(movie.id)}>Play</button>
-                <button className="banner_button">My List</button>
+                <button className={`banner_button ${eggActivated? 'btn_egg' : ''}`} onClick={() => setEggActivated(true)}>My List</button>
             </div>
 
             <h1 className="banner_description">{truncate(movie?.overview, 150)}</h1>
