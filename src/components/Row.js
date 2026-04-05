@@ -42,7 +42,7 @@ const PlayIcon = () => {
 
 // end Icons
 
-function Row( { title, fetchUrl, isLarge } ) {
+function Row( { title, fetchUrl, isLarge, isSearch } ) {
     const [ movies, setMovies ] = useState([]);
     const [ selectedMovie, setSelectedMovie ] = useState([]);
     const [ movieVideos, setMovieVideos ] = useState([]);
@@ -74,53 +74,61 @@ function Row( { title, fetchUrl, isLarge } ) {
         }
         fetchData();
     }, [fetchUrl])
-    
+
     return (
-        <div className="row">
+        <div className={`row ${isSearch ? "searchResult" : ""}`}>
             <h2>{title}</h2>
-            <div className="row_posters">
+            <div className="row_posters" style={{flexWrap: `${isSearch ? "wrap" : "unset"}`}}>
                 {
-                movies.map((movie) => (<img
-                        key={movie.id}
-                        className={`row_poster ${isLarge && "row_posterLarge"}` }
-                        src={ `${BASE_IMG_URL}${isLarge ? movie.poster_path : movie.backdrop_path }` }
-                        alt={movie.name}
-                        onClick={() => {
-                            function checkForTrailers(videos) {
-                                const trailerVideos = videos.filter(function(video) {
-                                    return video.type === "Trailer";
-                                })
+                movies.map((movie) => {
+                    if (movie.media_type === "person") {
+                        return null;
+                    }
+                    
+                    return (
+                        <img
+                            key={movie.id}
+                            className={`row_poster ${isLarge && "row_posterLarge"}` }
+                            src={ `${BASE_IMG_URL}${isLarge ? movie.poster_path : movie.backdrop_path }` }
+                            alt={movie.name}
+                            onClick={() => {
+                                function checkForTrailers(videos) {
+                                    const trailerVideos = videos.filter(function(video) {
+                                        return video.type === "Trailer";
+                                    })
 
-                                if (trailerVideos.length < 1) {
-                                    setTrailerAvailable(false)
-                                    return;
-                                }
-                                setTrailerAvailable(true)
-                            }
-
-                            async function fetchVideos(movie) {
-                                // movie-tv check
-                                // this looks a little cursed, but if it works it works am I right  
-                                const getMovie = await axios.get(requests.fetchVideos("movie", movie.id), {validateStatus:false})
-                                if (getMovie.status > 400) {
-                                    const getTv = await axios.get(requests.fetchVideos("tv", movie.id), {validateStatus:false})
-                                    if (getTv.status > 400) {
-                                        setTrailerAvailable(false);
+                                    if (trailerVideos.length < 1) {
+                                        setTrailerAvailable(false)
                                         return;
                                     }
-                                    setMovieVideos(getTv.data.results);
-                                    checkForTrailers(getTv.data.results);
+                                    setTrailerAvailable(true)
+                                }
+
+                                async function fetchVideos(movie) {
+                                    // movie-tv check
+                                    // this looks a little cursed, but if it works it works am I right  
+                                    const getMovie = await axios.get(requests.fetchVideos("movie", movie.id), {validateStatus:false})
+                                    if (getMovie.status > 400) {
+                                        const getTv = await axios.get(requests.fetchVideos("tv", movie.id), {validateStatus:false})
+                                        if (getTv.status > 400) {
+                                            setTrailerAvailable(false);
+                                            return;
+                                        }
+                                        setMovieVideos(getTv.data.results);
+                                        checkForTrailers(getTv.data.results);
+                                        return;
+                                    }
+                                    setMovieVideos(getMovie.data.results);
+                                    checkForTrailers(getMovie.data.results);
                                     return;
                                 }
-                                setMovieVideos(getMovie.data.results);
-                                checkForTrailers(getMovie.data.results);
-                                return;
-                            }
-                            setSelectedMovie(movie);
-                            fetchVideos(movie);  
-                            setModalOpen(true);
-                        }}
-                    />)
+                                setSelectedMovie(movie);
+                                fetchVideos(movie);  
+                                setModalOpen(true);
+                            }}
+                        />
+                    )
+                }
                 )
                 }
             </div>

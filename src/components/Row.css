@@ -5,9 +5,10 @@
 
 .row_posters {
     display:flex;
+    flex-shrink: 0;
     overflow-y: hidden;
     overflow-x: scroll;
-    scrollbar-width: 0px;
+    scrollbar-width: none;
     padding: 20px;
 }
 
@@ -18,7 +19,7 @@
 .row_poster {
     object-fit: contain;
     width: 100%;
-    max-height: 100px;
+    max-width: 200px;
     margin-right: 10px;
     transition: transform 450ms;
 }
@@ -35,4 +36,10 @@
 .row_posterLarge:hover {
     transform: scale(1.08);
     cursor: pointer;
+}
+
+.searchResult {
+    margin-top:150px;
+    height:fit-content;
+    width:95%;
 }

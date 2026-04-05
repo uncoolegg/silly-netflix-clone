@@ -4,6 +4,11 @@ const fetchVideos = (type, id) => {
     return `/${type}/${id}/videos?api_key=${API_KEY}`
 }
 
+// not sure if include_adult should be omitted
+const searchMoviesOrShows = (query) => {
+    return encodeURI(`/search/multi?api_key=${API_KEY}&include_adult=true&query=${query}`)
+}
+
 const requests = {
     fetchTrending: `/trending/all/week?api_key=${API_KEY}&language=en-US`,
     fetchNetflixOriginals: `/discover/tv?api_key=${API_KEY}&with_networks=213`,
@@ -13,7 +18,8 @@ const requests = {
     fetchHorrorMovies: `/discover/movie?api_key=${API_KEY}&with_genres=27`,
     fetchRomanceMovies: `/discover/movie?api_key=${API_KEY}&with_genres=10749`,
     fetchDocumentaries: `/discover/movie?api_key=${API_KEY}&with_genres=99`,
-    fetchVideos:fetchVideos
+    fetchVideos:fetchVideos,
+    searchMoviesOrShows:searchMoviesOrShows,
 };
 
 export default requests;

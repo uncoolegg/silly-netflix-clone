@@ -17,7 +17,7 @@ function VideoPlayer() {
     return (
     <div className="video_area">
         {LoadPlayer()}
-        <p className="marquee"><span>                                       THIS FEATURE IS INCOMPLETE AND IS NOT FINAL.                                    WHAT YOU SEE CURRENTLY MAY BE COMPLETELY DIFFERENT IN THE FUTURE.                                        I LOVE GOTH BADDIES.</span></p>
+        <p className="marquee"><span>                                       THIS FEATURE IS INCOMPLETE AND IS NOT FINAL.                                    WHAT YOU SEE CURRENTLY MAY BE COMPLETELY DIFFERENT IN THE FUTURE.                                        </span></p>
     </div>
     )
 }

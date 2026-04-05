@@ -31,3 +31,21 @@
 .nav_logo:hover {
     cursor: pointer;
 }
+
+.nav input[type=text] {
+    position:absolute;
+    right:50px;
+    padding: 5px 15px;
+    margin-right: 20px;
+    background: rgba(25, 25, 25, 0.75);
+    font-size:16px;
+    border:none;
+    cursor:pointer;
+    border-radius: 5px;
+    color:white;
+    
+}
+
+.nav input[type=text]::placeholder {
+    color:rgba(150, 150, 150, 1);
+}

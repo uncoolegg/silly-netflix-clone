@@ -8,7 +8,30 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  useSearchParams
 } from 'react-router-dom'
+
+const SearchPage = () => {
+  function LoadSearchResults() {
+    let [searchParams] = useSearchParams();
+    let queryParameter = searchParams.get("query");
+    console.log(queryParameter)
+    return (
+      <Row 
+        title={`Search results for '${queryParameter}'`}
+        fetchUrl={requests.searchMoviesOrShows(queryParameter)}
+        isLarge
+        isSearch  
+      />
+    )
+  }
+  return (
+    <div className="App">
+      <Nav />
+      {LoadSearchResults()}
+    </div>
+  )
+};
 
 const MainPage = () => (
   <div className="App">
@@ -43,6 +66,10 @@ function App() {
           <Route
             path="/player"
             element={<PlayerPage/>}
+          />
+          <Route
+            path="/search"
+            element={<SearchPage/>}
           />
         </Routes>
       </BrowserRouter>
