@@ -6,7 +6,7 @@
 .row_posters {
     display: -webkit-box;
     display: -ms-flexbox;
-    display:flex;
+    display: flex;
     overflow-y: hidden;
     overflow-x: auto;
     scrollbar-width: none;
@@ -17,6 +17,14 @@
 
 .row_posters::-webkit-scrollbar {
     display: none;
+}
+
+.row_poster_wrap {
+    position: relative;
+    flex-shrink: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
 }
 
 .row_poster {
