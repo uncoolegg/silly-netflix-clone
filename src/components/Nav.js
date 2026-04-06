@@ -5,6 +5,7 @@ import './Nav.css'
 function Nav() {
     const [show, navbarVisible] = useState(false);
     const [searchQuery, setQuery] = useState("")
+    const [hamburgerVisible, setHamburgerVisible] = useState(false);
     const navigate = useNavigate();
 
     const initSearch = () => {
@@ -56,6 +57,7 @@ function Nav() {
             }}
             onKeyDown={keyDownHandler}
         />
+        <div className='nav_mobile_menu'></div>
     </div>
   )
 }

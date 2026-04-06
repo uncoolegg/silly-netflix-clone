@@ -49,3 +49,22 @@
 .nav input[type=text]::placeholder {
     color:rgba(150, 150, 150, 1);
 }
+
+.nav_mobile_menu {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .nav input[type=text] {
+        display:none;
+    }
+
+    .nav_mobile_menu {
+        display:block;
+        margin-top:65px;
+        background: rgba(50, 50, 50, 0.75);
+        backdrop-filter: blur(5px);
+        width:100%;
+        height:auto;
+    }
+}
